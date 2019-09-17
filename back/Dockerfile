@@ -10,8 +10,7 @@ ENV APP_ENV $app_env
 COPY . /go/src/github.com/user/GoDoRP/api
 WORKDIR /go/src/github.com/user/GoDoRP/api
 
-# added vendor services will need to be included here
-RUN go get ./vendor/database
+RUN go get ./database
 
 RUN go get ./
 RUN go build
