@@ -2,9 +2,9 @@ package middleware
 
 import (
 	"net/http"
-	u "lens/utils"
+	u "apigo/back/utils"
 	"strings"
-	"apigo/models"
+	"apigo/back/models"
 	jwt "github.com/dgrijalva/jwt-go"
 	"os"
 	"context"

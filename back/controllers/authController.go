@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"net/http"
-	u "apigo/utils"
-	"apigo/models"
+	u "apigo/back/utils"
+	"apigo/back//models"
 	"encoding/json"
 )
 

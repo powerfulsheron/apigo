@@ -2,11 +2,12 @@ package models
 
 import (
 	"github.com/dgrijalva/jwt-go"
-	u "lens/utils"
+	u "apigo/back/utils"
 	"strings"
 	"github.com/jinzhu/gorm"
 	"os"
 	"golang.org/x/crypto/bcrypt"
+	"apigo/back/database"
 )
 
 /*

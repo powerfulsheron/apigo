@@ -7,8 +7,8 @@ ARG app_env
 ENV APP_ENV $app_env
 
 # it is okay to leave user/GoDoRP as long as you do not want to share code with other libraries
-COPY . /go/src/github.com/user/GoDoRP/api
-WORKDIR /go/src/github.com/user/GoDoRP/api
+COPY . /go/src/apigo/back/
+WORKDIR /go/src/apigo/back/
 
 RUN go get ./database
 

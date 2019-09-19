@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/gorilla/mux"
-	"apigo/middleware"
+	"apigo/back/middleware"
 	"os"
 	"fmt"
 	"net/http"
