@@ -12,5 +12,4 @@
 *.out
 
 # db and other credentials
-.env
 /db

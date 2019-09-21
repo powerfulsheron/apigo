@@ -12,6 +12,8 @@ services:
       - PGDATA=/pgdata
 
   api:
+    env_file:
+      - .env
     build:
       context: ./back
       args:

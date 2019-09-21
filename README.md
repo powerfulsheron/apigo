@@ -7,6 +7,23 @@ Then you can open the React frontend at localhost:3000 and the RESTful GoLang AP
 
 Changing any frontend (React) code locally will cause a hot-reload in the browser with updates and changing any backend (GoLang) code locally will also automatically update any changes.
 
+## JWT 
+
+```
+http://localhost:5000/api/user/new
+{
+"email":"lolo@gmail.com",
+"password":"secret"
+}
+
+http://localhost:5000/api/user/login
+{
+"email":"lolo@gmail.com",
+"password":"secret"
+}
+
+```
+
 ## Context
 
 Après le Brexit l'Europe a pris un coup dans l'aile politiquement et économiquement.
