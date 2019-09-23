@@ -1,6 +1,10 @@
 ## Getting started:
 ```
-$ docker-compose up
+$ sudo docker-compose up
+
+or
+
+$ sudo make up
 ```
 
 Then you can open the React frontend at localhost:3000 and the RESTful GoLang API at localhost:5000

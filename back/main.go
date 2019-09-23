@@ -16,13 +16,12 @@ func main() {
 	router.HandleFunc("/api/user/login", controllers.Authenticate).Methods("POST")
 	router.Use(middleware.JwtAuthentication) //attach JWT auth middleware
 
-	port := os.Getenv("PORT") //Get port from .env file, we did not specify any port so this should return an empty string when tested locally
+	port := os.Getenv("api_port") //Get port from .env file
 	if port == "" {
-		port = "8080" //localhost
+		fmt.Print("Can't find port from env, defaulting to 8080")
+		port = "8080" //localhost if no port found
 	}
-
-	fmt.Println(port)
-
+	
 	err := http.ListenAndServe(":" + port, router) //Launch the app, visit localhost:8000/api
 	if err != nil {
 		fmt.Print(err)

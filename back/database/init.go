@@ -26,8 +26,6 @@ func init() {
 	dbName := os.Getenv("db_name")
 
 	dbURI := fmt.Sprintf("host=%s user=%s dbname=%s sslmode=disable password=%s", dbHost, username, dbName, password)
-	fmt.Println("dburi")
-	fmt.Println(dbUri)
 
 	conn, err := gorm.Open("postgres", dbURI)
 	if err != nil {
