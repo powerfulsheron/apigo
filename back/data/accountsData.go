@@ -3,18 +3,20 @@ package data
 import (
 	"apigo/back/database"
 	"apigo/back/models"
-	"golang.org/x/crypto/bcrypt"
-	"github.com/jinzhu/gorm"
+	u "apigo/back/utils"
 	"os"
 	"strings"
-	u "apigo/back/utils"
+
 	"github.com/dgrijalva/jwt-go"
+	"github.com/jinzhu/gorm"
+	"golang.org/x/crypto/bcrypt"
 )
 
+// Account : account model
 type Account models.Account
 
-//Validate incoming user details...
-func (account *Account) Validate() (map[string] interface{}, bool) {
+// Validate incoming user details
+func (account *Account) Validate() (map[string]interface{}, bool) {
 
 	if !strings.Contains(account.Email, "@") {
 		return u.Message(false, "Email address is required"), false
@@ -39,7 +41,8 @@ func (account *Account) Validate() (map[string] interface{}, bool) {
 	return u.Message(false, "Requirement passed"), true
 }
 
-func (account *Account) Create() (map[string] interface{}) {
+// Create an account
+func (account *Account) Create() map[string]interface{} {
 
 	if resp, ok := account.Validate(); !ok {
 		return resp
@@ -67,7 +70,8 @@ func (account *Account) Create() (map[string] interface{}) {
 	return response
 }
 
-func Login(email, password string) (map[string]interface{}) {
+// Login user
+func Login(email, password string) map[string]interface{} {
 
 	account := &models.Account{}
 	err := database.GetDB().Table("accounts").Where("email = ?", email).First(account).Error
@@ -96,6 +100,7 @@ func Login(email, password string) (map[string]interface{}) {
 	return resp
 }
 
+// GetUser getter
 func GetUser(u uint) *models.Account {
 
 	acc := &models.Account{}

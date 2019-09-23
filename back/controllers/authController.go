@@ -1,12 +1,13 @@
 package controllers
 
 import (
-	"net/http"
-	u "apigo/back/utils"
 	"apigo/back/data"
+	u "apigo/back/utils"
 	"encoding/json"
+	"net/http"
 )
 
+// CreateAccount : new user controller
 var CreateAccount = func(w http.ResponseWriter, r *http.Request) {
 
 	account := &data.Account{}
@@ -20,6 +21,7 @@ var CreateAccount = func(w http.ResponseWriter, r *http.Request) {
 	u.Respond(w, resp)
 }
 
+// Authenticate : login user controller
 var Authenticate = func(w http.ResponseWriter, r *http.Request) {
 
 	account := &data.Account{}
