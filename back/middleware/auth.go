@@ -5,17 +5,20 @@ import (
 	u "apigo/back/utils"
 	"context"
 	"fmt"
-	"net/http"
+	"github.com/gin-gonic/gin"
 	"os"
 	"strings"
+	"net/http"
 
 	jwt "github.com/dgrijalva/jwt-go"
 )
 
 // JwtAuthentication : jwt middleware
-var JwtAuthentication = func(next http.Handler) http.Handler {
+var JwtAuthentication = func() gin.HandlerFunc {
 
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	return func(c *gin.Context) {
+		w := c.Writer
+		r := c.Request
 
 		notAuth := []string{"/api/user/new", "/api/user/login"} //List of endpoints that doesn't require auth
 		requestPath := r.URL.Path                               //current request path
@@ -24,7 +27,7 @@ var JwtAuthentication = func(next http.Handler) http.Handler {
 		for _, value := range notAuth {
 
 			if value == requestPath {
-				next.ServeHTTP(w, r)
+				engine.ServeHTTP(w, r)
 				return
 			}
 		}
@@ -76,6 +79,6 @@ var JwtAuthentication = func(next http.Handler) http.Handler {
 		fmt.Sprintf("User %", tk.UserId) //Useful for monitoring
 		ctx := context.WithValue(r.Context(), "user", tk.UserId)
 		r = r.WithContext(ctx)
-		next.ServeHTTP(w, r) //proceed in the middleware chain!
-	})
+		engine.ServeHTTP(w, r) //proceed in the middleware chain!
+	}
 }
