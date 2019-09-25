@@ -1,81 +1,90 @@
 package middleware
 
 import (
+	"github.com/gin-gonic/gin"
+	"github.com/appleboy/gin-jwt/v2"
 	"apigo/back/models"
-	u "apigo/back/utils"
-	"context"
-	"fmt"
-	"net/http"
-	"os"
-	"strings"
-
-	jwt "github.com/dgrijalva/jwt-go"
+	"time"
+	"apigo/back/data"
 )
 
-// JwtAuthentication : jwt middleware
-var JwtAuthentication = func(next http.Handler) http.Handler {
+type login struct {
+	Email string `form:"email" json:"email" binding:"required"`
+	Password string `form:"password" json:"password" binding:"required"`
+}
 
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+var identityKey = "uuid"
 
-		notAuth := []string{"/api/user/new", "/api/user/login"} //List of endpoints that doesn't require auth
-		requestPath := r.URL.Path                               //current request path
 
-		//check if request does not need authentication, serve the request if it doesn't need it
-		for _, value := range notAuth {
-
-			if value == requestPath {
-				next.ServeHTTP(w, r)
-				return
-			}
-		}
-
-		response := make(map[string]interface{})
-		tokenHeader := r.Header.Get("Authorization") //Grab the token from the header
-
-		if tokenHeader == "" { //Token is missing, returns with error code 403 Unauthorized
-			response = u.Message(false, "Missing auth token")
-			w.WriteHeader(http.StatusForbidden)
-			w.Header().Add("Content-Type", "application/json")
-			u.Respond(w, response)
-			return
-		}
-
-		splitted := strings.Split(tokenHeader, " ") //The token normally comes in format `Bearer {token-body}`, we check if the retrieved token matched this requirement
-		if len(splitted) != 2 {
-			response = u.Message(false, "Invalid/Malformed auth token")
-			w.WriteHeader(http.StatusForbidden)
-			w.Header().Add("Content-Type", "application/json")
-			u.Respond(w, response)
-			return
-		}
-
-		tokenPart := splitted[1] //Grab the token part, what we are truly interested in
-		tk := &models.Token{}
-
-		token, err := jwt.ParseWithClaims(tokenPart, tk, func(token *jwt.Token) (interface{}, error) {
-			return []byte(os.Getenv("token_password")), nil
-		})
-
-		if err != nil { //Malformed token, returns with http code 403 as usual
-			response = u.Message(false, "Malformed authentication token")
-			w.WriteHeader(http.StatusForbidden)
-			w.Header().Add("Content-Type", "application/json")
-			u.Respond(w, response)
-			return
-		}
-
-		if !token.Valid { //Token is invalid, maybe not signed on this server
-			response = u.Message(false, "Token is not valid.")
-			w.WriteHeader(http.StatusForbidden)
-			w.Header().Add("Content-Type", "application/json")
-			u.Respond(w, response)
-			return
-		}
-
-		//Everything went well, proceed with the request and set the caller to the user retrieved from the parsed token
-		fmt.Sprintf("User %", tk.UserId) //Useful for monitoring
-		ctx := context.WithValue(r.Context(), "user", tk.UserId)
-		r = r.WithContext(ctx)
-		next.ServeHTTP(w, r) //proceed in the middleware chain!
+// AuthMiddleware : The authmiddlare handling jwt token security
+func AuthMiddleware()  (*jwt.GinJWTMiddleware, error){
+	return jwt.New(&jwt.GinJWTMiddleware{
+		Realm:       "test zone",
+		Key:         []byte("secret key"),
+		Timeout:     time.Hour,
+		MaxRefresh:  time.Hour,
+		IdentityKey: identityKey,
+		PayloadFunc: payloadFunc,
+		IdentityHandler: identityHandler,
+		Authenticator: authenticator,
+		Authorizator: authorizator,
+		Unauthorized: unauthorized,
+		TokenLookup: "header: Authorization, query: token, cookie: jwt",
+		TokenHeadName: "Bearer",
+		TimeFunc: time.Now,
 	})
+}
+
+
+func unauthorized (c *gin.Context, code int, message string) {
+	c.JSON(code, gin.H{
+		"code":    code,
+		"message": message,
+	})
+}
+
+
+func authorizator (data interface{}, c *gin.Context) bool {
+	if v, ok := data.(*models.User); ok && v.Email == "admin" {
+		return true
+	}
+	return false
+}
+
+
+func authenticator (c *gin.Context) (interface{}, error) {
+	var loginVals login
+	if err := c.ShouldBind(&loginVals); err != nil {
+		return "", jwt.ErrMissingLoginValues
+	}
+	email := loginVals.Email
+	password := loginVals.Password
+	user := data.Login(email, password)
+	
+	if (user){
+		return &models.User{
+			Email:  email,
+			Lastname:  user.Lastname,
+			Firstname: user.Firstname,
+		}, nil
+	}
+
+	return nil, jwt.ErrFailedAuthentication
+}
+
+func identityHandler (c *gin.Context) interface{} {
+	claims := jwt.ExtractClaims(c)
+	return &models.User{
+		Email: claims[identityKey].(string),
+	}
+}
+
+
+func payloadFunc (data interface{}) jwt.MapClaims {
+	if v, ok := data.(*models.User); ok {
+		return jwt.MapClaims{
+			identityKey: v.Email,
+		}
+	}
+	return jwt.MapClaims{}
 }

@@ -12,7 +12,9 @@ WORKDIR /go/src/apigo/back/
 
 RUN go get ./database
 
+RUN export GO111MODULE=on
 RUN go get ./
+
 RUN go build
 
 # if dev setting will use pilu/fresh for code reloading via docker-compose volume sharing with local machine
