@@ -19,7 +19,7 @@ var JwtAuthentication = func(c *gin.Context) {
 	w := c.Writer
 	r := c.Request
 
-	notAuth := []string{"/api/user/new", "/api/user/login"} //List of endpoints that doesn't require auth
+	notAuth := []string{"/new", "/login"} //List of endpoints that doesn't require auth
 	requestPath := r.URL.Path                               //current request path
 
 	//check if request does not need authentication, serve the request if it doesn't need it
