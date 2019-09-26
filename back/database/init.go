@@ -34,7 +34,7 @@ func init() {
 	}
 
 	db = conn
-	db.Debug().AutoMigrate(&models.Account{})
+	db.Debug().AutoMigrate(&models.User{})
 }
 
 // GetDB : Getter db

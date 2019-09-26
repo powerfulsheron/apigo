@@ -7,30 +7,30 @@ import (
 	"net/http"
 )
 
-// CreateAccount : new user controller
-var CreateAccount = func(w http.ResponseWriter, r *http.Request) {
+// CreateUser : new user controller
+var CreateUser = func(w http.ResponseWriter, r *http.Request) {
 
-	account := &data.Account{}
-	err := json.NewDecoder(r.Body).Decode(account) //decode the request body into struct and failed if any error occur
+	user := &data.User{}
+	err := json.NewDecoder(r.Body).Decode(user) //decode the request body into struct and failed if any error occur
 	if err != nil {
 		u.Respond(w, u.Message(false, "Invalid request"))
 		return
 	}
 
-	resp := account.Create() //Create account
+	resp := user.Create() //Create user
 	u.Respond(w, resp)
 }
 
 // Authenticate : login user controller
 var Authenticate = func(w http.ResponseWriter, r *http.Request) {
 
-	account := &data.Account{}
-	err := json.NewDecoder(r.Body).Decode(account) //decode the request body into struct and failed if any error occur
+	user := &data.User{}
+	err := json.NewDecoder(r.Body).Decode(user) //decode the request body into struct and failed if any error occur
 	if err != nil {
 		u.Respond(w, u.Message(false, "Invalid request"))
 		return
 	}
 
-	resp := data.Login(account.Email, account.Password)
+	resp := data.Login(user.Email, user.Password)
 	u.Respond(w, resp)
 }

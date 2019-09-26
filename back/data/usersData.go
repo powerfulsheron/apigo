@@ -12,25 +12,25 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// Account : account model
-type Account models.Account
+// User : user model
+type User models.User
 
 // Validate incoming user details
-func (account *Account) Validate() (map[string]interface{}, bool) {
+func (user *User) Validate() (map[string]interface{}, bool) {
 
-	if !strings.Contains(account.Email, "@") {
+	if !strings.Contains(user.Email, "@") {
 		return u.Message(false, "Email address is required"), false
 	}
 
-	if len(account.Password) < 6 {
+	if len(user.Password) < 6 {
 		return u.Message(false, "Password is required"), false
 	}
 
 	//Email must be unique
-	temp := &models.Account{}
+	temp := &models.User{}
 
 	//check for errors and duplicate emails
-	err := database.GetDB().Table("accounts").Where("email = ?", account.Email).First(temp).Error
+	err := database.GetDB().Table("users").Where("email = ?", user.Email).First(temp).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return u.Message(false, "Connection error. Please retry"), false
 	}
@@ -41,40 +41,40 @@ func (account *Account) Validate() (map[string]interface{}, bool) {
 	return u.Message(false, "Requirement passed"), true
 }
 
-// Create an account
-func (account *Account) Create() map[string]interface{} {
+// Create an user
+func (user *User) Create() map[string]interface{} {
 
-	if resp, ok := account.Validate(); !ok {
+	if resp, ok := user.Validate(); !ok {
 		return resp
 	}
 
-	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(account.Password), bcrypt.DefaultCost)
-	account.Password = string(hashedPassword)
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	user.Password = string(hashedPassword)
 
-	database.GetDB().Create(account)
+	database.GetDB().Create(user)
 
-	if account.ID <= 0 {
-		return u.Message(false, "Failed to create account, connection error.")
+	if user.ID <= 0 {
+		return u.Message(false, "Failed to create user, connection error.")
 	}
 
-	//Create new JWT token for the newly registered account
-	tk := &models.Token{UserId: account.ID}
+	//Create new JWT token for the newly registered user
+	tk := &models.Token{UserId: user.ID}
 	token := jwt.NewWithClaims(jwt.GetSigningMethod("HS256"), tk)
 	tokenString, _ := token.SignedString([]byte(os.Getenv("token_password")))
-	account.Token = tokenString
+	user.Token = tokenString
 
-	account.Password = "" //delete password
+	user.Password = "" //delete password
 
-	response := u.Message(true, "Account has been created")
-	response["account"] = account
+	response := u.Message(true, "User has been created")
+	response["user"] = user
 	return response
 }
 
 // Login user
 func Login(email, password string) map[string]interface{} {
 
-	account := &models.Account{}
-	err := database.GetDB().Table("accounts").Where("email = ?", email).First(account).Error
+	user := &models.User{}
+	err := database.GetDB().Table("users").Where("email = ?", email).First(user).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return u.Message(false, "Email address not found")
@@ -82,33 +82,33 @@ func Login(email, password string) map[string]interface{} {
 		return u.Message(false, "Connection error. Please retry")
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(account.Password), []byte(password))
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	if err != nil && err == bcrypt.ErrMismatchedHashAndPassword { //Password does not match!
 		return u.Message(false, "Invalid login credentials. Please try again")
 	}
 	//Worked! Logged In
-	account.Password = ""
+	user.Password = ""
 
 	//Create JWT token
-	tk := &models.Token{UserId: account.ID}
+	tk := &models.Token{UserId: user.ID}
 	token := jwt.NewWithClaims(jwt.GetSigningMethod("HS256"), tk)
 	tokenString, _ := token.SignedString([]byte(os.Getenv("token_password")))
-	account.Token = tokenString //Store the token in the response
+	user.Token = tokenString //Store the token in the response
 
 	resp := u.Message(true, "Logged In")
-	resp["account"] = account
+	resp["user"] = user
 	return resp
 }
 
 // GetUser getter
-func GetUser(u uint) *models.Account {
+func GetUser(u uint) *models.User {
 
-	acc := &models.Account{}
-	database.GetDB().Table("accounts").Where("id = ?", u).First(acc)
-	if acc.Email == "" { //User not found!
+	user := &models.User{}
+	database.GetDB().Table("users").Where("id = ?", u).First(user)
+	if user.Email == "" { //User not found!
 		return nil
 	}
 
-	acc.Password = ""
-	return acc
+	user.Password = ""
+	return user
 }
