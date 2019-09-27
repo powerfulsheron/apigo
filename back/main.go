@@ -11,13 +11,22 @@ import (
 func main() {
 	router := gin.Default()
 
-	// Login route
+	// --- AUTH ---
 	router.POST("/new", func(c *gin.Context) {
 		controllers.CreateUser(c.Writer, c.Request)
 	})
 
 	router.POST("/login", func(c *gin.Context) {
 		controllers.Authenticate(c.Writer, c.Request)
+	})
+
+	// --- VOTES ---
+	router.GET("/votes", func(c *gin.Context) {
+		controllers.GetVotes(c.Writer, c.Request)
+	})
+
+	router.POST("/votes", func(c *gin.Context) {
+		controllers.CreateVote(c.Writer, c.Request)
 	})
 
 	// Vote route
