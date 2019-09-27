@@ -17,6 +17,7 @@ type Token struct {
 //a struct to rep user
 type User struct {
 	gorm.Model
+	Uuid
 	Email       string    `json:"Email"`
 	Password    string    `json:"Password"`
 	Token       string 	  `json:"token";sql:"-"`
