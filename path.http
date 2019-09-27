@@ -10,6 +10,7 @@ POST http://localhost:5000/api/user/new
 
 ### Login
 POST http://localhost:5000/api/user/login
+
 {
     "email":"lolo@gmail.com",
     "password":"secret"

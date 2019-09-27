@@ -19,7 +19,7 @@ services:
       args:
         app_env: ${APP_ENV}
     volumes:
-      - ./back:/back
+      - ./back:/back:rw,consistent
     ports:
       - "5000:8080"
     links:
@@ -31,6 +31,6 @@ services:
       args:
         app_env: ${APP_ENV}
     volumes:
-      - ./front/src:/front/src 
+      - ./front/src:/front/src
     ports:
       - "3000:3000"
