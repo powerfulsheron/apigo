@@ -12,13 +12,17 @@ func main() {
 	router := gin.Default()
 
 	// --- AUTH ---
-	router.POST("/new", func(c *gin.Context) {
+	router.POST("/users", func(c *gin.Context) {
 		controllers.CreateUser(c.Writer, c.Request)
 	})
 
 	router.POST("/login", func(c *gin.Context) {
 		controllers.Authenticate(c.Writer, c.Request)
 	})
+
+	router.PUT("/users/:uuid", controllers.UpdateUser)
+
+	router.DELETE("/users/:uuid", controllers.DeleteUser)
 
 	// --- VOTES ---
 	router.GET("/votes", func(c *gin.Context) {
