@@ -6,7 +6,7 @@ import (
 	u "apigo/back/utils"
 	"os"
 	"strings"
-
+	uuid "github.com/satori/go.uuid"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
@@ -23,7 +23,7 @@ func (user *User) Validate() (map[string]interface{}, bool) {
 	}
 
 	if len(user.Password) < 6 {
-		return u.Message(false, "Password is required"), false
+		return u.Message(false, "Password is too short"), false
 	}
 
 	//Email must be unique
@@ -57,12 +57,6 @@ func (user *User) Create() map[string]interface{} {
 		return u.Message(false, "Failed to create user, connection error.")
 	}
 
-	//Create new JWT token for the newly registered user
-	tk := &models.Token{UserId: user.ID}
-	token := jwt.NewWithClaims(jwt.GetSigningMethod("HS256"), tk)
-	tokenString, _ := token.SignedString([]byte(os.Getenv("token_password")))
-	user.Token = tokenString
-
 	user.Password = "" //delete password
 
 	response := u.Message(true, "User has been created")
@@ -70,8 +64,44 @@ func (user *User) Create() map[string]interface{} {
 	return response
 }
 
+// Update an user
+func (user *User) Update() map[string]interface{} {
+
+	if resp, ok := user.Validate(); !ok {
+		return resp
+	}
+
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	user.Password = string(hashedPassword)
+
+	database.GetDB().Save(user)
+
+	if user.ID <= 0 {
+		return u.Message(false, "Failed to create user, connection error.")
+	}
+
+	user.Password = "" //delete password
+
+	response := u.Message(true, "User has been Updated")
+	response["user"] = user
+	return response
+}
+
+// Delete the user
+func (user *User) Delete() map[string]interface{} {
+
+	if user.ID <= 0 {
+		return u.Message(false, "Failed to delete user, connection error.")
+	}
+	database.GetDB().Delete(user)
+
+	response := u.Message(true, "User has been Deleted")
+	response["user"] = user
+	return response
+}
+
 // Login user
-func Login(email, password string) map[string]interface{} {
+func Login(email, password, adress string) map[string]interface{} {
 
 	user := &models.User{}
 	err := database.GetDB().Table("users").Where("email = ?", email).First(user).Error
@@ -84,31 +114,30 @@ func Login(email, password string) map[string]interface{} {
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	if err != nil && err == bcrypt.ErrMismatchedHashAndPassword { //Password does not match!
-		return u.Message(false, "Invalid login credentials. Please try again")
+		var ip Ip
+		ip.Adress = adress
+		return ip.Increment()
 	}
 	//Worked! Logged In
-	user.Password = ""
 
-	//Create JWT token
-	tk := &models.Token{UserId: user.ID}
+	//Create new JWT token for the newly registered user
+	tk := &models.Token{Uuid: user.Uuid.UUID,AccessLevel: user.AccessLevel}
 	token := jwt.NewWithClaims(jwt.GetSigningMethod("HS256"), tk)
 	tokenString, _ := token.SignedString([]byte(os.Getenv("token_password")))
-	user.Token = tokenString //Store the token in the response
+	response := u.Message(true, "Logged In")
+	response["jwt"] = tokenString
+	return response
 
-	resp := u.Message(true, "Logged In")
-	resp["user"] = user
-	return resp
 }
 
 // GetUser getter
-func GetUser(u uint) *models.User {
+func GetUser(uuid uuid.UUID) *models.User {
 
 	user := &models.User{}
-	database.GetDB().Table("users").Where("id = ?", u).First(user)
+	database.GetDB().Table("users").Where("uuid = ?", uuid).First(user)
 	if user.Email == "" { //User not found!
 		return nil
 	}
-
 	user.Password = ""
 	return user
 }

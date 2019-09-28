@@ -75,8 +75,9 @@ var JwtAuthentication = func(c *gin.Context) {
 	}
 
 	//Everything went well, proceed with the request and set the caller to the user retrieved from the parsed token
-	fmt.Sprintf("User %", tk.UserId) //Useful for monitoring
-	ctx := context.WithValue(r.Context(), "user", tk.UserId)
+	fmt.Sprintf("User %", tk.Uuid) //Useful for monitoring
+	tokenMap := map[string]interface{}{"uuid": tk.Uuid, "access_level": tk.AccessLevel}
+	ctx := context.WithValue(r.Context(), "user", tokenMap)
 	r = r.WithContext(ctx)
 	c.Request = r
 	c.Next() //proceed in the middleware chain!

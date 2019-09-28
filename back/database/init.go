@@ -34,8 +34,7 @@ func init() {
 	}
 
 	db = conn
-	db.Debug().AutoMigrate(&models.User{})
-	db.Debug().AutoMigrate(&models.Vote{})
+	db.Debug().AutoMigrate(&models.User{}, &models.Vote{}, &models.Ip{})
 }
 
 // GetDB : Getter db

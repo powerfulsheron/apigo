@@ -2,6 +2,7 @@ package models
 
 import (
 	"github.com/dgrijalva/jwt-go"
+	uuid "github.com/satori/go.uuid"
 	"github.com/jinzhu/gorm"
 	"time"
 )
@@ -10,7 +11,8 @@ import (
 JWT claims struct
 */
 type Token struct {
-	UserId uint
+	Uuid *uuid.UUID 
+	AccessLevel int
 	jwt.StandardClaims
 }
 
@@ -18,11 +20,10 @@ type Token struct {
 type User struct {
 	gorm.Model
 	Uuid
-	Email       string    `json:"Email"`
-	Password    string    `json:"Password"`
-	Token       string 	  `json:"token";sql:"-"`
-	AccessLevel int       `json:"AccessLevel"`
-	FirstName   string    `json:"FirstName"`
-	LastName    string    `json:"LastName"` 
-	DateOfBirth time.Time `json:"DateOfBirth"`
+	Email       string    `json:"email"`
+	Password    string    `json:"pass"`
+	AccessLevel int       `json:"access_level"`
+	FirstName   string    `json:"first_name"`
+	LastName    string    `json:"last_name"` 
+	DateOfBirth time.Time `json:"birth_date"`
 }
