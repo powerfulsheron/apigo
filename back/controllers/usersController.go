@@ -5,10 +5,11 @@ import (
 	u "apigo/back/utils"
 	"encoding/json"
 	"net/http"
-	"github.com/gin-gonic/gin"
 	"os"
 	"strings"
+
 	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -24,7 +25,7 @@ var CreateUser = func(w http.ResponseWriter, r *http.Request) {
 	if user.AccessLevel != 0 {
 		response := make(map[string]interface{})
 		tokenHeader := r.Header.Get("Authorization") //Grab the token from the header
-		if tokenHeader == "" { //Token is missing, returns with error code 403 Unauthorized
+		if tokenHeader == "" {                       //Token is missing, returns with error code 403 Unauthorized
 			response = u.Message(false, "Missing auth token")
 			w.WriteHeader(http.StatusForbidden)
 			w.Header().Add("Content-Type", "application/json")
@@ -59,11 +60,11 @@ var CreateUser = func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		//Everything went well, proceed with the request and set the caller to the user retrieved from the parsed token
-		if tk.AccessLevel!=0 {
+		if tk.AccessLevel != 0 {
 			resp := user.Create() //Create Admin
 			u.Respond(w, resp)
 			return
-		} else if tk.AccessLevel==0 {
+		} else if tk.AccessLevel == 0 {
 			u.Respond(w, u.Message(false, "Error, you must have admin rights for this"))
 			return
 		}
@@ -80,7 +81,7 @@ var UpdateUser = func(c *gin.Context) {
 
 	response := make(map[string]interface{})
 	tokenHeader := r.Header.Get("Authorization") //Grab the token from the header
-	if tokenHeader == "" { //Token is missing, returns with error code 403 Unauthorized
+	if tokenHeader == "" {                       //Token is missing, returns with error code 403 Unauthorized
 		response = u.Message(false, "Missing auth token")
 		w.WriteHeader(http.StatusForbidden)
 		w.Header().Add("Content-Type", "application/json")
@@ -115,7 +116,7 @@ var UpdateUser = func(c *gin.Context) {
 		return
 	}
 	//Everything went well, proceed with the request and set the caller to the user retrieved from the parsed token
-	if tk.AccessLevel==0 {
+	if tk.AccessLevel == 0 {
 		u.Respond(c.Writer, u.Message(false, "Error, you must have admin rights for this"))
 		return
 	}
@@ -164,7 +165,7 @@ var UpdateUser = func(c *gin.Context) {
 
 var DeleteUser = func(c *gin.Context) {
 	contextUser := c.Request.Context().Value("user")
-	if contextUser.(map[string]interface{})["access_level"]==0 {
+	if contextUser.(map[string]interface{})["access_level"] == 0 {
 		u.Respond(c.Writer, u.Message(false, "Error, you must have admin rights for this"))
 		return
 	}

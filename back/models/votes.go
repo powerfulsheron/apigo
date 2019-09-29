@@ -10,5 +10,5 @@ type Vote struct {
 	Uuid
 	Title       string `gorm:"size:255"json:"title"`
 	Description string `gorm:"size:1023"json:"description"`
-	//UUIDVotes   []string `"json:"uuid_votes"`
+	UserVotes   []User `gorm:"many2many:uuid_votes;"`
 }

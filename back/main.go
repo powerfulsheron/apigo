@@ -29,11 +29,13 @@ func main() {
 
 	router.POST("/votes", controllers.CreateVote)
 
-	router.GET("/votes/:uuid", controllers.GetVotes)
+	router.GET("/votes/:uuid", controllers.GetVote)
 
 	router.PUT("/votes/:uuid", controllers.UpdateVote)
 
 	router.DELETE("/votes/:uuid", controllers.DeleteVote)
+
+	router.POST("/votes/:uuid", controllers.Vote)
 
 	// Vote route
 	router.Use(middleware.JwtAuthentication) // attach JWT auth middleware
