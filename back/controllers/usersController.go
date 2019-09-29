@@ -75,8 +75,47 @@ var CreateUser = func(w http.ResponseWriter, r *http.Request) {
 }
 
 var UpdateUser = func(c *gin.Context) {
-	contextUser := c.Request.Context().Value("user")
-	if contextUser.(map[string]interface{})["access_level"]==0 {
+	w := c.Writer
+	r := c.Request
+
+	response := make(map[string]interface{})
+	tokenHeader := r.Header.Get("Authorization") //Grab the token from the header
+	if tokenHeader == "" { //Token is missing, returns with error code 403 Unauthorized
+		response = u.Message(false, "Missing auth token")
+		w.WriteHeader(http.StatusForbidden)
+		w.Header().Add("Content-Type", "application/json")
+		u.Respond(w, response)
+		return
+	}
+	splitted := strings.Split(tokenHeader, " ") //The token normally comes in format `Bearer {token-body}`, we check if the retrieved token matched this requirement
+	if len(splitted) != 2 {
+		response = u.Message(false, "Invalid/Malformed auth token")
+		w.WriteHeader(http.StatusForbidden)
+		w.Header().Add("Content-Type", "application/json")
+		u.Respond(w, response)
+		return
+	}
+	tokenPart := splitted[1] //Grab the token part, what we are truly interested in
+	tk := &data.Token{}
+	token, err := jwt.ParseWithClaims(tokenPart, tk, func(token *jwt.Token) (interface{}, error) {
+		return []byte(os.Getenv("token_password")), nil
+	})
+	if err != nil { //Malformed token, returns with http code 403 as usual
+		response = u.Message(false, "Malformed authentication token")
+		w.WriteHeader(http.StatusForbidden)
+		w.Header().Add("Content-Type", "application/json")
+		u.Respond(w, response)
+		return
+	}
+	if !token.Valid { //Token is invalid, maybe not signed on this server
+		response = u.Message(false, "Token is not valid.")
+		w.WriteHeader(http.StatusForbidden)
+		w.Header().Add("Content-Type", "application/json")
+		u.Respond(w, response)
+		return
+	}
+	//Everything went well, proceed with the request and set the caller to the user retrieved from the parsed token
+	if tk.AccessLevel==0 {
 		u.Respond(c.Writer, u.Message(false, "Error, you must have admin rights for this"))
 		return
 	}
@@ -85,16 +124,35 @@ var UpdateUser = func(c *gin.Context) {
 		u.Respond(c.Writer, u.Message(false, "Can't find specified uuid"))
 		return
 	}
-	user := data.GetUser(uuidParam)
+	user := data.GetUserWithPW(uuidParam)
 	if user.Uuid.UUID != nil {
 		newUser := &data.User{}
-		err := json.NewDecoder(c.Request.Body).Decode(newUser) //decode the request body into struct and failed if any error occur
+		newUser.ID = user.ID
+		newUser.LastName = user.LastName
+		newUser.Uuid.UUID = user.Uuid.UUID
+		newUser.Password = user.Password
+		newUser.AccessLevel = user.AccessLevel
+		newUser.FirstName = user.FirstName
+		newUser.DateOfBirth = user.DateOfBirth
+		newUser.ID = user.ID
+		temp := &data.User{}
+		err := json.NewDecoder(c.Request.Body).Decode(temp) //decode the request body into struct and failed if any error occur
 		if err != nil {
 			u.Respond(c.Writer, u.Message(false, "Errors in user parameters"))
 			return
 		}
-		newUser.ID = user.ID
-		// Validate user
+		if temp.Email != "" {
+			newUser.Email = temp.Email
+		}
+		if temp.Password != "" {
+			newUser.Password = temp.Password
+		}
+		if temp.LastName != "" {
+			newUser.LastName = temp.LastName
+		}
+		if temp.FirstName != "" {
+			newUser.FirstName = temp.FirstName
+		}
 		resp := newUser.Update()
 		// Display modified data in JSON message "success"
 		c.JSON(200, gin.H{"success": resp})

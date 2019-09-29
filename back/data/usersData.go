@@ -142,3 +142,13 @@ func GetUser(uuid uuid.UUID) *models.User {
 	user.Password = ""
 	return user
 }
+
+func GetUserWithPW(uuid uuid.UUID) *models.User {
+
+	user := &models.User{}
+	database.GetDB().Table("users").Where("uuid = ?", uuid).First(user)
+	if user.Email == "" { //User not found!
+		return nil
+	}
+	return user
+}
