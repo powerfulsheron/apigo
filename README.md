@@ -11,6 +11,15 @@ Then you can open the React frontend at localhost:3000 and the RESTful GoLang AP
 
 Changing any frontend (React) code locally will cause a hot-reload in the browser with updates and changing any backend (GoLang) code locally will also automatically update any changes.
 
+
+## Connect to Postgres:
+
+```ssh
+osbkone@osbkone-XPS-15-7590:~/dev/go/apigo$ docker exec -it d9f bash
+root@d9f273587f3e:/# psql -U docker
+docker-# \c postgres
+```
+
 ## JWT 
 
 ```
