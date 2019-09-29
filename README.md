@@ -20,16 +20,25 @@ root@d9f273587f3e:/# psql -U docker
 docker-# \c postgres
 ```
 
+## Testing:
+
+```
+docker exec -it 834 bash
+root@8344ae56c9b8:/go/src/apigo/back# cd tests
+root@8344ae56c9b8:/go/src/apigo/back/tests# cd back/test
+root@8344ae56c9b8:/go/src/apigo/back/tests# go test -v
+```
+
 ## JWT 
 
 ```
-http://localhost:5000/api/user/new
+http://localhost:5000/users
 {
 "email":"lolo@gmail.com",
 "password":"secret"
 }
 
-http://localhost:5000/api/user/login
+http://localhost:5000/login
 {
 "email":"lolo@gmail.com",
 "password":"secret"
