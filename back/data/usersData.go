@@ -6,9 +6,10 @@ import (
 	u "apigo/back/utils"
 	"os"
 	"strings"
-	uuid "github.com/satori/go.uuid"
+
 	"github.com/dgrijalva/jwt-go"
 	"github.com/jinzhu/gorm"
+	uuid "github.com/satori/go.uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -121,7 +122,7 @@ func Login(email, password, adress string) map[string]interface{} {
 	//Worked! Logged In
 
 	//Create new JWT token for the newly registered user
-	tk := &models.Token{Uuid: user.Uuid.UUID,AccessLevel: user.AccessLevel}
+	tk := &models.Token{Uuid: user.Uuid.UUID, AccessLevel: user.AccessLevel}
 	token := jwt.NewWithClaims(jwt.GetSigningMethod("HS256"), tk)
 	tokenString, _ := token.SignedString([]byte(os.Getenv("token_password")))
 	response := u.Message(true, "Logged In")

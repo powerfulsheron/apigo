@@ -19,7 +19,6 @@ func (vote *Vote) Create() map[string]interface{} {
 	return response
 }
 
-/*
 // Update an account
 func (vote *Vote) Update() map[string]interface{} {
 	database.GetDB().Save(vote)
@@ -41,13 +40,11 @@ func (vote *Vote) Delete() map[string]interface{} {
 }
 
 // GetVote from DB
-func GetVote(uuid string) *Vote {
-
-	vote := &Vote{}
-	database.GetDB().Table("votes").Where("uuid = ?", uuid).First(vote)
-
+func GetVote(uuid string) Vote {
+	vote := Vote{}
+	database.GetDB().Table("votes").Where("uuid = ?", uuid).First(&vote)
 	return vote
-}*/
+}
 
 // GetVotes get all votes from DB
 func GetVotes() []Vote {
