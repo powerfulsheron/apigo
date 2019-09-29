@@ -11,7 +11,7 @@ import (
 func main() {
 	router := gin.Default()
 
-	router.Use(middleware.IPFirewall()) // attach IPBlock middleware
+	router.Use(middleware.IPFirewall())      // attach IPBlock middleware
 	router.Use(middleware.JwtAuthentication) // attach JWT auth middleware
 
 	// --- AUTH ---
@@ -28,13 +28,17 @@ func main() {
 	router.DELETE("/users/:uuid", controllers.DeleteUser)
 
 	// --- VOTES ---
-	router.GET("/votes", func(c *gin.Context) {
-		controllers.GetVotes(c.Writer, c.Request)
-	})
+	router.GET("/votes", controllers.GetVotes)
 
-	router.POST("/votes", func(c *gin.Context) {
-		controllers.CreateVote(c.Writer, c.Request)
-	})
+	router.POST("/votes", controllers.CreateVote)
+
+	router.GET("/votes/:uuid", controllers.GetVote)
+
+	router.PUT("/votes/:uuid", controllers.UpdateVote)
+
+	router.DELETE("/votes/:uuid", controllers.DeleteVote)
+
+	router.POST("/votes/:uuid", controllers.Vote)
 
 	router.Run(os.Getenv("api_port"))
 }

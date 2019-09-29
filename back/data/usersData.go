@@ -10,6 +10,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
+
 	"golang.org/x/crypto/bcrypt"
 )
 
