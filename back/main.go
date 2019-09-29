@@ -25,13 +25,9 @@ func main() {
 	router.DELETE("/users/:uuid", controllers.DeleteUser)
 
 	// --- VOTES ---
-	router.GET("/votes", func(c *gin.Context) {
-		controllers.GetVotes(c.Writer, c.Request)
-	})
+	router.GET("/votes", controllers.GetVotes)
 
-	router.POST("/votes", func(c *gin.Context) {
-		controllers.CreateVote(c.Writer, c.Request)
-	})
+	router.POST("/votes", controllers.CreateVote)
 
 	router.GET("/votes/:uuid", controllers.GetVotes)
 

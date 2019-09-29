@@ -4,6 +4,8 @@ import (
 	"apigo/back/database"
 	"apigo/back/models"
 	u "apigo/back/utils"
+
+	uuid "github.com/satori/go.uuid"
 )
 
 // Vote : vote model
@@ -13,7 +15,6 @@ type Vote models.Vote
 func (vote *Vote) Create() map[string]interface{} {
 	database.GetDB().Create(vote)
 
-	// Response
 	response := u.Message(true, "Vote has been created")
 	response["vote"] = vote
 	return response
@@ -23,7 +24,6 @@ func (vote *Vote) Create() map[string]interface{} {
 func (vote *Vote) Update() map[string]interface{} {
 	database.GetDB().Save(vote)
 
-	// Response
 	response := u.Message(true, "Vote has been updated")
 	response["vote"] = vote
 	return response
@@ -33,14 +33,13 @@ func (vote *Vote) Update() map[string]interface{} {
 func (vote *Vote) Delete() map[string]interface{} {
 	database.GetDB().Delete(vote)
 
-	// Response
 	response := u.Message(true, "Vote has been deleted")
 	response["vote"] = vote
 	return response
 }
 
 // GetVote from DB
-func GetVote(uuid string) Vote {
+func GetVote(uuid uuid.UUID) Vote {
 	vote := Vote{}
 	database.GetDB().Table("votes").Where("uuid = ?", uuid).First(&vote)
 	return vote

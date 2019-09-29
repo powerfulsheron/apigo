@@ -4,37 +4,36 @@ import (
 	"apigo/back/data"
 	u "apigo/back/utils"
 	"encoding/json"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
 )
 
 // GetVotes : GET a list of votes
-var GetVotes = func(w http.ResponseWriter, r *http.Request) {
+var GetVotes = func(c *gin.Context) {
 	votes := data.GetVotes() // Get votes
-	w.Header().Add("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(votes)
+	c.Writer.Header().Add("Content-Type", "application/json")
+	json.NewEncoder(c.Writer).Encode(votes)
 }
 
 // CreateVote : POST a vote
-var CreateVote = func(w http.ResponseWriter, r *http.Request) {
+var CreateVote = func(c *gin.Context) {
 
-	contextUser := r.Context().Value("user")
+	contextUser := c.Request.Context().Value("user")
 	if contextUser.(map[string]interface{})["access_level"] == 0 {
-		u.Respond(w, u.Message(false, "Error, you must have admin rights for this"))
+		c.JSON(401, gin.H{"Error": "You are not authorized to do this"})
 		return
 	}
 
 	vote := &data.Vote{}
-	err := json.NewDecoder(r.Body).Decode(vote) //decode the request body into struct and failed if any error occur
+	err := json.NewDecoder(c.Request.Body).Decode(vote) //decode the request body into struct and failed if any error occur
 	if err != nil {
-		u.Respond(w, u.Message(false, "Invalid request"))
+		c.JSON(400, gin.H{"Error": "You must provide all params"})
 		return
 	}
 
 	resp := vote.Create() //Create user
-	u.Respond(w, resp)
+	c.JSON(200, gin.H{"success": resp})
 }
 
 // GetVote : GET a single vote
@@ -43,6 +42,7 @@ var GetVote = func(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(400, gin.H{"Error": "You must provide the uuid in the params"})
+		return
 	}
 
 	resp := data.GetVote(uuidParam)
@@ -72,13 +72,13 @@ var UpdateVote = func(c *gin.Context) {
 			c.JSON(200, gin.H{"error": "You must provide all needed params"})
 			return
 		}
+
 		newVote.ID = vote.ID
 		resp := newVote.Update()
 		c.JSON(200, gin.H{"success": resp})
 	} else {
 		c.JSON(404, gin.H{"error": "User not found"})
 	}
-
 }
 
 // DeleteVote : DELETE a vote
@@ -103,7 +103,6 @@ var DeleteVote = func(c *gin.Context) {
 		vote.Delete()
 		c.JSON(204, gin.H{"success": "Deleted successfuly"})
 	} else {
-		// Display JSON error
 		c.JSON(404, gin.H{"error": "User not found"})
 	}
 }
