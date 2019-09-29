@@ -18,6 +18,12 @@ var GetVotes = func(c *gin.Context) {
 // CreateVote : POST a vote
 var CreateVote = func(c *gin.Context) {
 
+	contextUser := c.Request.Context().Value("user")
+	if contextUser.(map[string]string)["access_level"] == "0" {
+		c.JSON(401, gin.H{"Error": "You are not authorized"})
+		return
+	}
+
 	vote := &data.Vote{}
 	err := json.NewDecoder(c.Request.Body).Decode(vote) //decode the request body into struct and failed if any error occur
 	if err != nil {
@@ -39,11 +45,22 @@ var GetVote = func(c *gin.Context) {
 	}
 
 	resp := data.GetVote(uuidParam)
-	c.JSON(200, gin.H{"success": resp})
+
+	if resp.Uuid.UUID != nil {
+		c.JSON(200, gin.H{"success": resp})
+	} else {
+		c.JSON(404, gin.H{"error": "Not found"})
+	}
 }
 
 // UpdateVote : PUT/UPDATE a vote
 var UpdateVote = func(c *gin.Context) {
+
+	contextUser := c.Request.Context().Value("user")
+	if contextUser.(map[string]string)["access_level"] == "0" {
+		c.JSON(401, gin.H{"Error": "You are not authorized"})
+		return
+	}
 
 	uuidParam, err := uuid.FromString(c.Params.ByName("uuid"))
 	if err != nil {
@@ -77,6 +94,12 @@ var UpdateVote = func(c *gin.Context) {
 // DeleteVote : DELETE a vote
 var DeleteVote = func(c *gin.Context) {
 
+	contextUser := c.Request.Context().Value("user")
+	if contextUser.(map[string]string)["access_level"] == "0" {
+		c.JSON(401, gin.H{"Error": "You are not authorized"})
+		return
+	}
+
 	uuidParam, err := uuid.FromString(c.Params.ByName("uuid"))
 	if err != nil {
 		c.JSON(400, gin.H{"Error": "You must provide the uuid in the params"})
@@ -90,5 +113,37 @@ var DeleteVote = func(c *gin.Context) {
 		c.JSON(204, gin.H{"success": "Deleted successfuly"})
 	} else {
 		c.JSON(404, gin.H{"error": "Vote not found"})
+	}
+}
+
+// Vote : POST vote for a purpose
+var Vote = func(c *gin.Context) {
+
+	contextUser := c.Request.Context().Value("user")
+	uuidUserStr := contextUser.(map[string]string)["uuid"]
+	uuidUser, err := uuid.FromString(uuidUserStr)
+
+	if err != nil {
+		c.JSON(400, gin.H{"Error": "Invalid uuid"})
+		return
+	}
+
+	uuidParam, err := uuid.FromString(c.Params.ByName("uuid"))
+	if err != nil {
+		c.JSON(400, gin.H{"Error": "You must provide the uuid in the params"})
+		return
+	}
+
+	vote := data.GetVote(uuidParam)
+	if vote.Uuid.UUID != nil {
+		resp := vote.Append(uuidUser)
+		if resp {
+			c.JSON(200, gin.H{"success": "voted"})
+		} else {
+			c.JSON(500, gin.H{"error": "internal error"})
+		}
+
+	} else {
+		c.JSON(404, gin.H{"error": "User not found"})
 	}
 }

@@ -11,7 +11,7 @@ import (
 func main() {
 	router := gin.Default()
 
-	router.Use(middleware.IPFirewall()) // attach IPBlock middleware
+	router.Use(middleware.IPFirewall())      // attach IPBlock middleware
 	router.Use(middleware.JwtAuthentication) // attach JWT auth middleware
 
 	// --- AUTH ---
@@ -40,7 +40,5 @@ func main() {
 
 	router.POST("/votes/:uuid", controllers.Vote)
 
-	// Vote route
-	router.Use(middleware.JwtAuthentication) // attach JWT auth middleware
 	router.Run(os.Getenv("api_port"))
 }

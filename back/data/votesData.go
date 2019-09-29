@@ -51,3 +51,12 @@ func GetVotes() []Vote {
 	database.GetDB().Find(&votes)
 	return votes
 }
+
+// Append a vote
+func (vote *Vote) Append(uuidUser uuid.UUID) bool {
+	u := &models.User{}
+	database.GetDB().Table("users").Where("uuid = ?", uuidUser).First(u)
+	database.GetDB().Model(vote).Association("User").Append(u)
+
+	return true
+}
