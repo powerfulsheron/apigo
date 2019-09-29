@@ -44,7 +44,7 @@ func (user *User) Validate() (map[string]interface{}, bool) {
 	return u.Message(false, "Requirement passed"), true
 }
 
-// Create an user
+// Create a user
 func (user *User) Create() map[string]interface{} {
 
 	if resp, ok := user.Validate(); !ok {
@@ -54,6 +54,7 @@ func (user *User) Create() map[string]interface{} {
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	user.Password = string(hashedPassword)
 
+	//Create user in database
 	database.GetDB().Create(user)
 
 	if user.ID <= 0 {
@@ -77,6 +78,7 @@ func (user *User) Update() map[string]interface{} {
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	user.Password = string(hashedPassword)
 
+	//Save the update in database
 	database.GetDB().Save(user)
 
 	if user.ID <= 0 {
@@ -96,6 +98,7 @@ func (user *User) Delete() map[string]interface{} {
 	if user.ID <= 0 {
 		return u.Message(false, "Failed to delete user, connection error.")
 	}
+	//Delete User in database
 	database.GetDB().Delete(user)
 
 	response := u.Message(true, "User has been Deleted")
@@ -133,7 +136,7 @@ func Login(email, password, adress string) map[string]interface{} {
 
 }
 
-// GetUser getter
+// GetUser without password
 func GetUser(uuid uuid.UUID) *models.User {
 
 	user := &models.User{}
@@ -145,6 +148,7 @@ func GetUser(uuid uuid.UUID) *models.User {
 	return user
 }
 
+// GetUser with password
 func GetUserWithPW(uuid uuid.UUID) *models.User {
 
 	user := &models.User{}

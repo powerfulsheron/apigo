@@ -75,6 +75,7 @@ var CreateUser = func(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//UpdateUser : update user's info
 var UpdateUser = func(c *gin.Context) {
 	w := c.Writer
 	r := c.Request
@@ -125,6 +126,7 @@ var UpdateUser = func(c *gin.Context) {
 		u.Respond(c.Writer, u.Message(false, "Can't find specified uuid"))
 		return
 	}
+	//Get with password to update everything
 	user := data.GetUserWithPW(uuidParam)
 	if user.Uuid.UUID != nil {
 		newUser := &data.User{}
@@ -163,6 +165,7 @@ var UpdateUser = func(c *gin.Context) {
 	}
 }
 
+//DeleteUser : Delete a user
 var DeleteUser = func(c *gin.Context) {
 	contextUser := c.Request.Context().Value("user")
 	if contextUser.(map[string]interface{})["access_level"] == 0 {
@@ -174,6 +177,7 @@ var DeleteUser = func(c *gin.Context) {
 		u.Respond(c.Writer, u.Message(false, "Can't find specified uuid"))
 		return
 	}
+	//Every steps to delete user
 	user := &data.User{}
 	user.ID = data.GetUser(uuidParam).ID
 	if user.ID == 0 {

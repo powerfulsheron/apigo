@@ -10,8 +10,10 @@ import (
 	"github.com/joho/godotenv"
 )
 
+//database declaration
 var db *gorm.DB
 
+//initialisation with credentials, etc..
 func init() {
 
 	e := godotenv.Load()
