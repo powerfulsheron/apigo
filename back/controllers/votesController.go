@@ -1,10 +1,10 @@
 package controllers
 
 import (
+	"apigo/back/data"
 	u "apigo/back/utils"
 	"encoding/json"
 	"net/http"
-	"apigo/back/data"
 )
 
 // GetVotes : GET a list of votes

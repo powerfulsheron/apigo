@@ -6,9 +6,10 @@ import (
 	u "apigo/back/utils"
 	"os"
 	"strings"
-	uuid "github.com/satori/go.uuid"
+
 	"github.com/dgrijalva/jwt-go"
 	"github.com/jinzhu/gorm"
+	uuid "github.com/satori/go.uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -42,7 +43,7 @@ func (user *User) Validate() (map[string]interface{}, bool) {
 	return u.Message(false, "Requirement passed"), true
 }
 
-// Create an user
+// Create a user
 func (user *User) Create() map[string]interface{} {
 
 	if resp, ok := user.Validate(); !ok {
@@ -52,6 +53,7 @@ func (user *User) Create() map[string]interface{} {
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	user.Password = string(hashedPassword)
 
+	//Create user in database
 	database.GetDB().Create(user)
 
 	if user.ID <= 0 {
@@ -75,6 +77,7 @@ func (user *User) Update() map[string]interface{} {
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	user.Password = string(hashedPassword)
 
+	//Save the update in database
 	database.GetDB().Save(user)
 
 	if user.ID <= 0 {
@@ -94,6 +97,7 @@ func (user *User) Delete() map[string]interface{} {
 	if user.ID <= 0 {
 		return u.Message(false, "Failed to delete user, connection error.")
 	}
+	//Delete User in database
 	database.GetDB().Delete(user)
 
 	response := u.Message(true, "User has been Deleted")
@@ -122,7 +126,7 @@ func Login(email, password, adress string) map[string]interface{} {
 	//Worked! Logged In
 
 	//Create new JWT token for the newly registered user
-	tk := &models.Token{Uuid: user.Uuid.UUID,AccessLevel: user.AccessLevel}
+	tk := &models.Token{Uuid: user.Uuid.UUID, AccessLevel: user.AccessLevel}
 	token := jwt.NewWithClaims(jwt.GetSigningMethod("HS256"), tk)
 	tokenString, _ := token.SignedString([]byte(os.Getenv("token_password")))
 	response := u.Message(true, "Logged In")
@@ -131,7 +135,7 @@ func Login(email, password, adress string) map[string]interface{} {
 
 }
 
-// GetUser getter
+// GetUser without password
 func GetUser(uuid uuid.UUID) *models.User {
 
 	user := &models.User{}
@@ -143,6 +147,7 @@ func GetUser(uuid uuid.UUID) *models.User {
 	return user
 }
 
+// GetUser with password
 func GetUserWithPW(uuid uuid.UUID) *models.User {
 
 	user := &models.User{}
