@@ -14,6 +14,7 @@ import (
 
 // User : user model
 type User models.User
+type Token models.Token
 
 // Validate incoming user details
 func (user *User) Validate() (map[string]interface{}, bool) {
