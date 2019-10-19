@@ -53,10 +53,13 @@ func GetVotes() []Vote {
 }
 
 // Append a vote
-func (vote *Vote) Append(uuidUser uuid.UUID) bool {
-	u := &models.User{}
-	database.GetDB().Table("users").Where("uuid = ?", uuidUser).First(u)
-	database.GetDB().Model(vote).Association("User").Append(u)
+func (vote *Vote) Append(uuidUser uuid.UUID) map[string]interface{} {
 
-	return true
+	vote.UserVotes = append(vote.UserVotes, (uuidUser).String())
+	database.GetDB().Save(vote)
+
+	response := u.Message(true, "Vote has been updated")
+	response["vote"] = vote
+
+	return response
 }

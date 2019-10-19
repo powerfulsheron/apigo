@@ -136,12 +136,8 @@ var Vote = func(c *gin.Context) {
 
 	vote := data.GetVote(uuidParam)
 	if vote.Uuid.UUID != nil {
-		resp := vote.Append(uuidUser)
-		if resp {
-			c.JSON(200, gin.H{"success": "voted"})
-		} else {
-			c.JSON(500, gin.H{"error": "internal error"})
-		}
+		var resp = vote.Append(uuidUser)
+		c.JSON(200, gin.H{"success": resp})
 
 	} else {
 		c.JSON(404, gin.H{"error": "User not found"})

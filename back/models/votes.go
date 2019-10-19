@@ -8,7 +8,7 @@ import (
 type Vote struct {
 	gorm.Model
 	Uuid
-	Title       string `gorm:"size:255"json:"title"`
-	Description string `gorm:"size:1023"json:"description"`
-	UserVotes   []User `gorm:"foreignkey:Uuid"`
+	Title       string   `gorm:"size:255"json:"title"`
+	Description string   `gorm:"size:1023"json:"description"`
+	UserVotes   []string `gorm:"type:varchar(100)[]"`
 }
