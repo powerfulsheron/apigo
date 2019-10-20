@@ -1,18 +1,17 @@
 package test
 
 import (
+	"apigo/back/controllers"
 	"bytes"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"apigo/back/controllers"
 )
 
-
-func TestCreateUser(t *testing.T) { 
+func TestCreateUser(t *testing.T) {
 	var jsonStr = []byte(`{"email":"lolo1234","pass":"secresecret"}`)
 
-	req, err := http.NewRequest("POST", "/usrers", bytes.NewBuffer(jsonStr))
+	req, err := http.NewRequest("POST", "/users", bytes.NewBuffer(jsonStr))
 	if err != nil {
 		t.Fatal(err)
 	}
