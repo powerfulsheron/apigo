@@ -1,6 +1,6 @@
 
 ### New user
-POST http://localhost:5000/api/user/new
+POST http://localhost:5000/users
 
 {
     "email":"lolo@gmail.com",
@@ -9,7 +9,7 @@ POST http://localhost:5000/api/user/new
 
 
 ### Login
-POST http://localhost:5000/api/user/login
+POST http://localhost:5000/login
 
 {
     "email":"lolo@gmail.com",

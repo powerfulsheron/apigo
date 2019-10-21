@@ -1,11 +1,11 @@
 package test
 
 import (
+	"apigo/back/controllers"
 	"bytes"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"apigo/back/controllers"
 	"github.com/bxcodec/faker"
 	"fmt"
 	"encoding/json"
