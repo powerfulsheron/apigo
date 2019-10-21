@@ -22,6 +22,9 @@ logs: ## Show logs for all or c=<name> containers
 status: ## Show status of containers
 	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) ps
 
+test: ## Launch tests
+	docker exec -it apigo_api_1 bash -c "cd tests; go get github.com/bxcodec/faker; go test -v"
+
 ps: status ## Alias of status
 
 clean: confirm ## Clean all data
