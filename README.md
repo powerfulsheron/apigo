@@ -23,6 +23,10 @@ docker-# \c postgres
 ## Testing:
 
 ```
+make test
+
+or
+
 docker exec -it 834 bash
 root@8344ae56c9b8:/go/src/apigo/back# cd tests
 root@8344ae56c9b8:/go/src/apigo/back/tests# go get github.com/bxcodec/faker
