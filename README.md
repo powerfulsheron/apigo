@@ -25,7 +25,7 @@ docker-# \c postgres
 ```
 docker exec -it 834 bash
 root@8344ae56c9b8:/go/src/apigo/back# cd tests
-root@8344ae56c9b8:/go/src/apigo/back/tests# cd back/test
+root@8344ae56c9b8:/go/src/apigo/back/tests# go get github.com/bxcodec/faker
 root@8344ae56c9b8:/go/src/apigo/back/tests# go test -v
 ```
 
@@ -35,13 +35,13 @@ root@8344ae56c9b8:/go/src/apigo/back/tests# go test -v
 http://localhost:5000/users
 {
 "email":"lolo@gmail.com",
-"password":"secret"
+"pass":"secret"
 }
 
 http://localhost:5000/login
 {
 "email":"lolo@gmail.com",
-"password":"secret"
+"pass":"secret"
 }
 
 ```

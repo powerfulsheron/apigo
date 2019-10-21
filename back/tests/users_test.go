@@ -6,13 +6,32 @@ import (
 	"net/http/httptest"
 	"testing"
 	"apigo/back/controllers"
+	"github.com/bxcodec/faker"
+	"fmt"
+	"encoding/json"
 )
 
 
-func TestCreateUser(t *testing.T) { 
-	var jsonStr = []byte(`{"email":"lolo1234","pass":"secresecret"}`)
+type UserMock struct {
+	Email       string    `faker:"email"`
+	Password    string    `faker:"password"`
+	AccessLevel int 
+	FirstName   string    `faker:"first_name"`
+	LastName    string    `faker:"last_name"`
+}
 
-	req, err := http.NewRequest("POST", "/usrers", bytes.NewBuffer(jsonStr))
+func TestCreateUser(t *testing.T) { 
+
+	userMock := UserMock{}
+	userMock.AccessLevel = 0
+	err := faker.FakeData(&userMock)
+	if err != nil {
+		fmt.Println(err)
+	}
+	
+	var jsonStr = []byte(`{"email":"`+userMock.Email+`","pass":"`+userMock.Password+`"}`)
+
+	req, err := http.NewRequest("POST", "/users", bytes.NewBuffer(jsonStr))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -24,8 +43,19 @@ func TestCreateUser(t *testing.T) {
 		t.Errorf("handler returned wrong status code: got %v want %v",
 			status, http.StatusOK)
 	}
-	expected := `{"email":"lolo1234","pass":""}`
-	if rr.Body.String() != expected {
+
+	var responseBodyArray map[string]interface{}
+	if err := json.Unmarshal(rr.Body.Bytes(), &responseBodyArray); err != nil {
+		t.Fatal(err)
+	}
+
+	var userArray map[string]interface{}
+	userArray = responseBodyArray["user"].(map[string]interface{})
+
+	got := `{"email":"`+userArray["email"].(string)+`","pass":"`+userArray["pass"].(string)+`"}`
+	expected := `{"email":"`+userMock.Email+`","pass":""}`
+
+	if got != expected {
 		t.Errorf("handler returned unexpected body: got %v want %v",
 			rr.Body.String(), expected)
 	}
