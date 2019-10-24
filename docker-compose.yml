@@ -24,6 +24,8 @@ services:
       - "5000:8080"
     links:
       - db
+    depends_on:
+      - db
 
   frontend:
     build:
