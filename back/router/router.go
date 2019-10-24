@@ -21,6 +21,8 @@ func VoteRouter() *gin.Engine {
 	router.POST("/login", func(c *gin.Context) {
 		controllers.Authenticate(c.Writer, c.Request)
 	})
+
+	// --- USERS ---
 	router.PUT("/users/:uuid", controllers.UpdateUser)
 	router.DELETE("/users/:uuid", controllers.DeleteUser)
 

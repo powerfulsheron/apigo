@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"os"
 	"strings"
-
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
@@ -158,7 +157,7 @@ var UpdateUser = func(c *gin.Context) {
 		}
 		resp := newUser.Update()
 		// Display modified data in JSON message "success"
-		c.JSON(200, gin.H{"success": resp})
+		c.JSON(200, resp)
 	} else {
 		// Display JSON error
 		c.JSON(404, gin.H{"error": "User not found"})
@@ -168,7 +167,7 @@ var UpdateUser = func(c *gin.Context) {
 //DeleteUser : Delete a user
 var DeleteUser = func(c *gin.Context) {
 	contextUser := c.Request.Context().Value("user")
-	if contextUser.(map[string]interface{})["access_level"] == 0 {
+	if contextUser.(map[string]string)["access_level"] == "0" {
 		u.Respond(c.Writer, u.Message(false, "Error, you must have admin rights for this"))
 		return
 	}
@@ -180,14 +179,14 @@ var DeleteUser = func(c *gin.Context) {
 	//Every steps to delete user
 	user := &data.User{}
 	user.ID = data.GetUser(uuidParam).ID
-	if user.ID == 0 {
+	if user.ID != 0 {
 		// Delete user
 		resp := user.Delete()
 		// Display modified data in JSON message "success"
-		c.JSON(200, gin.H{"success": resp})
+		c.JSON(200, resp)
 	} else {
 		// Display JSON error
-		c.JSON(404, gin.H{"error": "User not found"})
+		c.JSON(404, gin.H{"error": "User not found"}) 
 	}
 }
 
