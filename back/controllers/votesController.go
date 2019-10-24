@@ -32,7 +32,7 @@ var CreateVote = func(c *gin.Context) {
 	}
 
 	resp := vote.Create() //Create user
-	c.JSON(200, gin.H{"success": resp})
+	c.JSON(200, gin.H{"response": resp})
 }
 
 // GetVote : GET a single vote
@@ -47,7 +47,7 @@ var GetVote = func(c *gin.Context) {
 	resp := data.GetVote(uuidParam)
 
 	if resp.Uuid.UUID != nil {
-		c.JSON(200, gin.H{"success": resp})
+		c.JSON(200, gin.H{"response": resp})
 	} else {
 		c.JSON(404, gin.H{"error": "Not found"})
 	}
@@ -85,7 +85,7 @@ var UpdateVote = func(c *gin.Context) {
 		}
 
 		resp := vote.Update()
-		c.JSON(200, gin.H{"success": resp})
+		c.JSON(200, gin.H{"response": resp})
 	} else {
 		c.JSON(404, gin.H{"error": "User not found"})
 	}
@@ -110,7 +110,7 @@ var DeleteVote = func(c *gin.Context) {
 
 	if vote.Uuid.UUID != nil {
 		vote.Delete()
-		c.JSON(204, gin.H{"success": "Deleted successfuly"})
+		c.JSON(204, gin.H{"message": "Deleted successfuly"})
 	} else {
 		c.JSON(404, gin.H{"error": "Vote not found"})
 	}
@@ -137,7 +137,7 @@ var Vote = func(c *gin.Context) {
 	vote := data.GetVote(uuidParam)
 	if vote.Uuid.UUID != nil {
 		var resp = vote.Append(uuidUser)
-		c.JSON(200, gin.H{"success": resp})
+		c.JSON(200, gin.H{"response": resp})
 
 	} else {
 		c.JSON(404, gin.H{"error": "User not found"})

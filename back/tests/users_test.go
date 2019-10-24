@@ -3,24 +3,24 @@ package test
 import (
 	"apigo/back/controllers"
 	"bytes"
+	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
 	"github.com/bxcodec/faker"
-	"fmt"
-	"encoding/json"
 )
 
-
 type UserMock struct {
-	Email       string    `faker:"email"`
-	Password    string    `faker:"password"`
-	AccessLevel int 
-	FirstName   string    `faker:"first_name"`
-	LastName    string    `faker:"last_name"`
+	Email       string `faker:"email"`
+	Password    string `faker:"password"`
+	AccessLevel int
+	FirstName   string `faker:"first_name"`
+	LastName    string `faker:"last_name"`
 }
 
-func TestCreateUser(t *testing.T) { 
+func TestCreateUser(t *testing.T) {
 
 	userMock := UserMock{}
 	userMock.AccessLevel = 0
@@ -28,8 +28,8 @@ func TestCreateUser(t *testing.T) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	
-	var jsonStr = []byte(`{"email":"`+userMock.Email+`","pass":"`+userMock.Password+`"}`)
+
+	var jsonStr = []byte(`{"email":"` + userMock.Email + `","pass":"` + userMock.Password + `"}`)
 
 	req, err := http.NewRequest("POST", "/users", bytes.NewBuffer(jsonStr))
 	if err != nil {
@@ -52,8 +52,8 @@ func TestCreateUser(t *testing.T) {
 	var userArray map[string]interface{}
 	userArray = responseBodyArray["user"].(map[string]interface{})
 
-	got := `{"email":"`+userArray["email"].(string)+`","pass":"`+userArray["pass"].(string)+`"}`
-	expected := `{"email":"`+userMock.Email+`","pass":""}`
+	got := `{"email":"` + userArray["email"].(string) + `","pass":"` + userArray["pass"].(string) + `"}`
+	expected := `{"email":"` + userMock.Email + `","pass":""}`
 
 	if got != expected {
 		t.Errorf("handler returned unexpected body: got %v want %v",
@@ -61,7 +61,7 @@ func TestCreateUser(t *testing.T) {
 	}
 }
 
-func TestUserLogin(t *testing.T) { 
+func TestUserLogin(t *testing.T) {
 
 	userMock := UserMock{}
 	userMock.AccessLevel = 0
@@ -69,8 +69,8 @@ func TestUserLogin(t *testing.T) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	
-	var jsonStr = []byte(`{"email":"`+userMock.Email+`","pass":"`+userMock.Password+`"}`)
+
+	var jsonStr = []byte(`{"email":"` + userMock.Email + `","pass":"` + userMock.Password + `"}`)
 
 	createReq, err := http.NewRequest("POST", "/users", bytes.NewBuffer(jsonStr))
 	if err != nil {
@@ -103,7 +103,7 @@ func TestUserLogin(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	got := `{"message":"`+responseBodyArray["message"].(string)+`","status":`+ fmt.Sprintf("%t", responseBodyArray["status"].(bool))+`}`
+	got := `{"message":"` + responseBodyArray["message"].(string) + `","status":` + fmt.Sprintf("%t", responseBodyArray["status"].(bool)) + `}`
 	expected := `{"message":"Logged In","status":true}`
 
 	if got != expected {

@@ -8,6 +8,11 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
+// UuidList
+type UuidList struct {
+	uuid []string
+}
+
 // Vote : vote model
 type Vote models.Vote
 
@@ -55,7 +60,11 @@ func GetVotes() []Vote {
 // Append a vote
 func (vote *Vote) Append(uuidUser uuid.UUID) map[string]interface{} {
 
-	vote.UserVotes = append(vote.UserVotes, (uuidUser).String())
+	if vote.UserVotes == "" {
+		vote.UserVotes = (uuidUser).String()
+	} else {
+		vote.UserVotes = vote.UserVotes + ", " + (uuidUser).String()
+	}
 	database.GetDB().Save(vote)
 
 	response := u.Message(true, "Vote has been updated")
