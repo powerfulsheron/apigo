@@ -1,5 +1,5 @@
 ## Getting started:
-```
+```ssh
 $ sudo docker-compose up
 
 or
@@ -15,6 +15,11 @@ Changing any frontend (React) code locally will cause a hot-reload in the browse
 ## Connect to Postgres:
 
 ```ssh
+
+make connect
+
+or
+
 osbkone@osbkone-XPS-15-7590:~/dev/go/apigo$ docker exec -it d9f bash
 root@d9f273587f3e:/# psql -U docker
 docker-# \c postgres
@@ -22,7 +27,7 @@ docker-# \c postgres
 
 ## Testing:
 
-```
+```ssh
 make test
 
 or
@@ -36,7 +41,7 @@ root@8344ae56c9b8:/go/src/apigo/back/tests# go test -v
 ## Endpoints 
 ### Auth
 #### Create user
-```
+```javascript
 POST
 http://localhost:5000/users
 {
@@ -48,7 +53,7 @@ http://localhost:5000/users
 }
 ```
 #### Login and get JWT token
-```
+```javascript
 POST
 http://localhost:5000/login
 {
@@ -58,7 +63,7 @@ http://localhost:5000/login
 ```
 ### User
 #### Modify user
-```
+```javascript
 PUT
 http://localhost:5000/users/:uuid
 {
@@ -69,7 +74,7 @@ http://localhost:5000/users/:uuid
 }
 ```
 #### Delete user
-```
+```javascript
 DELETE
 http://localhost:5000/users/:uuid
 {

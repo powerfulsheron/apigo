@@ -25,6 +25,9 @@ status: ## Show status of containers
 test: ## Launch tests
 	docker exec -it apigo_api_1 bash -c "cd tests; go get github.com/bxcodec/faker; go test -v"
 
+connect: ## Launch tests
+	docker exec -it apigo_db_1 bash -c "psql -U docker -d postgres"
+
 ps: status ## Alias of status
 
 clean: confirm ## Clean all data
