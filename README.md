@@ -1,4 +1,5 @@
 ## Getting started:
+
 ```
 $ sudo docker-compose up
 
@@ -10,7 +11,6 @@ $ sudo make up
 Then you can open the React frontend at localhost:3000 and the RESTful GoLang API at localhost:5000
 
 Changing any frontend (React) code locally will cause a hot-reload in the browser with updates and changing any backend (GoLang) code locally will also automatically update any changes.
-
 
 ## Connect to Postgres:
 
@@ -33,9 +33,12 @@ root@8344ae56c9b8:/go/src/apigo/back/tests# go get github.com/bxcodec/faker
 root@8344ae56c9b8:/go/src/apigo/back/tests# go test -v
 ```
 
-## Endpoints 
+## Endpoints
+
 ### Auth
+
 #### Create user
+
 ```
 POST
 http://localhost:5000/users
@@ -47,7 +50,9 @@ http://localhost:5000/users
     "birth_date": "0001-01-01T00:00:00Z"
 }
 ```
+
 #### Login and get JWT token
+
 ```
 POST
 http://localhost:5000/login
@@ -56,8 +61,11 @@ http://localhost:5000/login
     "pass":"secret"
 }
 ```
+
 ### User
+
 #### Modify user
+
 ```
 PUT
 http://localhost:5000/users/:uuid
@@ -68,10 +76,74 @@ http://localhost:5000/users/:uuid
     "last_name": "canava"
 }
 ```
+
 #### Delete user
+
 ```
 DELETE
 http://localhost:5000/users/:uuid
+{
+
+}
+```
+
+#### Get all votes
+
+```
+GET
+http://localhost:5000/votes
+{
+
+}
+```
+
+#### Get vote
+
+```
+GET
+http://localhost:5000/votes/:uuid
+{
+
+}
+```
+
+#### Create vote
+
+```
+POST
+http://localhost:5000/votes
+{
+    "title":"brexit"
+    "description":"Vote du brexit"
+}
+```
+
+#### Update vote
+
+```
+PUT
+http://localhost:5000/votes/:uuid
+{
+    "title":"brexit 2"
+    "description":"Vote du brexit 2"
+}
+```
+
+#### Delete vote
+
+```
+DELETE
+http://localhost:5000/votes/:uuid
+{
+
+}
+```
+
+#### Vote
+
+```
+POST
+http://localhost:5000/votes/:uuid
 {
 
 }
@@ -118,7 +190,7 @@ Entant que développeur vous avez la tâche de créer des outils permettant de v
 
 ## API
 
-L'API permet de réaliser des opérations de CRUD sur la base de donnée, le modèle utilisé est REST; Afin de ne pas dévoiler les IDs interne de la base de donnée ce sont des UUIDs qui sont utilisés dans les endpoints. Les codes de retours à utiliser sont 200  et 401 pour un appel non autorisé. 
+L'API permet de réaliser des opérations de CRUD sur la base de donnée, le modèle utilisé est REST; Afin de ne pas dévoiler les IDs interne de la base de donnée ce sont des UUIDs qui sont utilisés dans les endpoints. Les codes de retours à utiliser sont 200 et 401 pour un appel non autorisé.
 
 ### Login
 
@@ -183,9 +255,10 @@ Seul un administrateur peut créer un autre administrateur.
  "birth_date":"19-12-1987"
 }
 ```
+
 #### Modification d'un User
 
-``` PUT /users/[:uuid]```
+`PUT /users/[:uuid]`
 
 les champs qui penvent être changés sont uniquement FirstName, LastName, Email, Password
 les règles de vérification doivent être les mêmes appliqués lors de la création sur ces derniers champs.
@@ -214,7 +287,7 @@ DELETE /users/[:uuid]
 ```
 
 L'utilisateur doit continuer à exister dans la base de donnée (soft delete)
-Seul un administrateur est en mesure d'appeler ce service 
+Seul un administrateur est en mesure d'appeler ce service
 
 ### Vote
 
@@ -223,11 +296,10 @@ toutes actions de vote se fait sur la base de son UUID dans le JWT.
 
 #### Création d'une proposition d'un Vote
 
-``` POST /votes```
+`POST /votes`
 
 Seul les administrateurs ont les droits pour créer une proposition de vote
 la proposition doit avoir les champs Titre et description de rempli.
-
 
 ```json
 # call service
@@ -271,7 +343,6 @@ Seul un administrateur peut changer le titre et la description.
 L'administrateur n'a pas les droits pour changer la collection d'UUIDVote.
 Si un votant appel ce service c'est son UUID contenu dans le JWT qui est utilisé pour l'ajouter à la collection de UUIDVote.
 
-
 ```json
 # call service
 {
@@ -291,14 +362,13 @@ Si un votant appel ce service c'est son UUID contenu dans le JWT qui est utilis�
 
 ## Entités
 
-**User** : ID (int), UUID (string), AccessLevel (int), FirstName (string), LastName (string), Email (string), Password (string), DateOfBirth (time.Time), CreatedAt (time.Time), UpdatedAt (time.Time), DeletedAt (*time.Time).
+**User** : ID (int), UUID (string), AccessLevel (int), FirstName (string), LastName (string), Email (string), Password (string), DateOfBirth (time.Time), CreatedAt (time.Time), UpdatedAt (time.Time), DeletedAt (\*time.Time).
 l'ID est créé par la base de donnée en incrémental.
 le champs UUID est créé coté serveur à la réception du payload après validation des données.
 le password est haché coté serveur est stocké ensuite dans la base de donnée.
 
-**Vote** : ID (int), UUID (string), Title (string), Description (text), UUIDVote (collection), StartDate (time.Time), EndDate (time.Time), CreatedAt (time.Time), UpdatedAt (time.Time), DeletedAt (*time.Time).
+**Vote** : ID (int), UUID (string), Title (string), Description (text), UUIDVote (collection), StartDate (time.Time), EndDate (time.Time), CreatedAt (time.Time), UpdatedAt (time.Time), DeletedAt (\*time.Time).
 L'UUID vote est une collection d'UUID d'utilisateurs ayant voté.
-
 
 ## Liens
 
