@@ -126,8 +126,8 @@ var UpdateUser = func(c *gin.Context) {
 		return
 	}
 	//Get with password to update everything
-	user := data.GetUserWithPW(uuidParam)
-	if user.Uuid.UUID != nil {
+	user := data.GetUserWithPW(uuidParam)// Get user by uuid
+	if user.Uuid.UUID != nil { // Assign every param to the newUser
 		newUser := &data.User{}
 		newUser.ID = user.ID
 		newUser.LastName = user.LastName
@@ -143,7 +143,8 @@ var UpdateUser = func(c *gin.Context) {
 			u.Respond(c.Writer, u.Message(false, "Errors in user parameters"))
 			return
 		}
-		if temp.Email != "" {
+		// Verifiy variables that can be modified
+		if temp.Email != "" { 
 			newUser.Email = temp.Email
 		}
 		if temp.Password != "" {
@@ -166,12 +167,12 @@ var UpdateUser = func(c *gin.Context) {
 
 //DeleteUser : Delete a user
 var DeleteUser = func(c *gin.Context) {
-	contextUser := c.Request.Context().Value("user")
+	contextUser := c.Request.Context().Value("user") // Get the user from gin context
 	if contextUser.(map[string]string)["access_level"] == "0" {
 		u.Respond(c.Writer, u.Message(false, "Error, you must have admin rights for this"))
 		return
 	}
-	uuidParam, err := uuid.FromString(c.Params.ByName("uuid"))
+	uuidParam, err := uuid.FromString(c.Params.ByName("uuid")) // Get user from uuid
 	if err != nil {
 		u.Respond(c.Writer, u.Message(false, "Can't find specified uuid"))
 		return

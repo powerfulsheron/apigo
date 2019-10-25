@@ -13,7 +13,7 @@ import (
 	"apigo/back/router"
 )
 
-type UserMock struct {
+type UserMock struct { // Mock of User Struct using Faker
 	Email       string `faker:"email"`
 	Password    string `faker:"password"`
 	AccessLevel int
@@ -21,20 +21,19 @@ type UserMock struct {
 	LastName    string `faker:"last_name"`
 }
 
-
-
-func performRequestWithJwt(r http.Handler, method, path string, body []byte) *httptest.ResponseRecorder {
+// TO externalise in a tets_utils file
+func performRequestWithJwt(r http.Handler, method, path string, body []byte) *httptest.ResponseRecorder { // Mock request with gin context and jwt from .env
 	req, _ := http.NewRequest(method, path, bytes.NewBuffer(body))
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bearer "+os.Getenv("admin_jwt_for_test"))
+	req.Header.Set("Authorization", "Bearer "+os.Getenv("admin_jwt_for_test")) // Add token to header
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
 	return w
 }
 
-func TestCreateUser(t *testing.T) { 
+func TestCreateUser(t *testing.T) {  
 
-	userMock := UserMock{}
+	userMock := UserMock{} // Mock the user
 	userMock.AccessLevel = 0
 	err := faker.FakeData(&userMock)
 	if err != nil {
@@ -43,27 +42,29 @@ func TestCreateUser(t *testing.T) {
 
 	var jsonStr = []byte(`{"email":"` + userMock.Email + `","pass":"` + userMock.Password + `"}`)
 
-	req, err := http.NewRequest("POST", "/users", bytes.NewBuffer(jsonStr))
+	req, err := http.NewRequest("POST", "/users", bytes.NewBuffer(jsonStr)) // Request construct
 	if err != nil {
 		t.Fatal(err)
 	}
 	req.Header.Set("Content-Type", "application/json")
 	rr := httptest.NewRecorder()
 	handler := http.HandlerFunc(controllers.CreateUser)
-	handler.ServeHTTP(rr, req)
+	handler.ServeHTTP(rr, req) // Trigger request
 	if status := rr.Code; status != http.StatusOK {
 		t.Errorf("handler returned wrong status code: got %v want %v",
 			status, http.StatusOK)
 	}
 
-	var responseBodyArray map[string]interface{}
+	var responseBodyArray map[string]interface{} // deserialize request in a map 
 	if err := json.Unmarshal(rr.Body.Bytes(), &responseBodyArray); err != nil {
 		t.Fatal(err)
 	}
 
-	var userArray map[string]interface{}
+	var userArray map[string]interface{} // Instanciate user map
 	userArray = responseBodyArray["user"].(map[string]interface{})
 
+
+	// Compare what we got from the endpoint and what we expect from the mock
 	got := `{"email":"` + userArray["email"].(string) + `","pass":"` + userArray["pass"].(string) + `"}`
 	expected := `{"email":"` + userMock.Email + `","pass":""}`
 

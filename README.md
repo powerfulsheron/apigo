@@ -33,22 +33,73 @@ root@8344ae56c9b8:/go/src/apigo/back/tests# go get github.com/bxcodec/faker
 root@8344ae56c9b8:/go/src/apigo/back/tests# go test -v
 ```
 
-## JWT 
+## Endpoints 
 
+### Auth
+#### Create user
 ```
 http://localhost:5000/users
 {
-"email":"lolo@gmail.com",
-"pass":"secret"
+    "email":"lolo@gmail.com",
+    "pass":"secret",
+    "first_name": "lolo",
+    "last_name": "canava",
+    "birth_date": "0001-01-01T00:00:00Z"
 }
+```
 
+#### Login and get JWT token
+```
 http://localhost:5000/login
 {
-"email":"lolo@gmail.com",
-"pass":"secret"
+    "email":"lolo@gmail.com",
+    "pass":"secret"
 }
 
 ```
+
+### User
+#### Modify user
+```
+http://localhost:5000/users/:uuid
+{
+    "email":"lolo@gmail.com",
+    "pass":"secret",
+    "first_name": "lolo",
+    "last_name": "canava",
+    "birth_date": "0001-01-01T00:00:00Z"
+}
+```
+
+#### Login and get JWT token
+```
+http://localhost:5000/login
+{
+    "email":"lolo@gmail.com",
+    "pass":"secret"
+}
+
+```
+
+api_1       | [GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+api_1       |  - using env:     export GIN_MODE=release
+api_1       |  - using code:    gin.SetMode(gin.ReleaseMode)
+api_1       | 
+api_1       | [GIN-debug] POST   /users                    --> apigo/back/router.VoteRouter.func1 (5 handlers)
+api_1       | [GIN-debug] POST   /login                    --> apigo/back/router.VoteRouter.func2 (5 handlers)
+api_1       | 9:4:08 app         | [GIN-debug] PUT    /users/:uuid              --> apigo/back/controllers.glob..func2 (5 handlers)
+api_1       | [GIN-debug] DELETE /users/:uuid              --> apigo/back/controllers.glob..func3 (5 handlers)
+api_1       | [GIN-debug] GET    /votes                    --> apigo/back/controllers.glob..func5 (5 handlers)
+api_1       | [GIN-debug] POST   /votes                    --> apigo/back/controllers.glob..func6 (5 handlers)
+api_1       | [GIN-debug] GET    /votes/:uuid              --> apigo/back/controllers.glob..func7 (5 handlers)
+api_1       | [GIN-debug] PUT    /votes/:uuid              --> apigo/back/controllers.glob..func8 (5 handlers)
+api_1       | [GIN-debug] DELETE /votes/:uuid              --> apigo/back/controllers.glob..func9 (5 handlers)
+api_1       | [GIN-debug] POST   /votes/:uuid              --> apigo/back/controllers.glob..func10 (5 handlers)
+api_1       | [GIN-debug] Listening and serving HTTP on :8080
+
+### Users
+
+
 
 ## Context
 

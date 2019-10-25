@@ -22,6 +22,8 @@ func VoteRouter() *gin.Engine {
 		controllers.Authenticate(c.Writer, c.Request)
 	})
 
+	// --- NEED JWT TOKEN ---
+
 	// --- USERS ---
 	router.PUT("/users/:uuid", controllers.UpdateUser)
 	router.DELETE("/users/:uuid", controllers.DeleteUser)

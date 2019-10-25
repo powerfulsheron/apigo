@@ -144,7 +144,7 @@ func GetUser(uuid uuid.UUID) *models.User {
 	if user.Email == "" { //User not found!
 		return nil
 	}
-	user.Password = ""
+	user.Password = "" // remove password from user to send back to the client
 	return user
 }
 

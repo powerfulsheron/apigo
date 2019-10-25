@@ -22,12 +22,13 @@ func init() {
 		fmt.Print(e)
 	}
 
+	// Get credentials from .env
 	username := os.Getenv("db_user")
 	password := os.Getenv("db_pass")
 	dbHost := os.Getenv("db_host")
 	dbName := os.Getenv("db_name")
 
-	dbURI := fmt.Sprintf("host=%s user=%s dbname=%s sslmode=disable password=%s", dbHost, username, dbName, password)
+	dbURI := fmt.Sprintf("host=%s user=%s dbname=%s sslmode=disable password=%s", dbHost, username, dbName, password) // construct db uri 
 
 	conn, err := gorm.Open("postgres", dbURI)
 	if err != nil {
