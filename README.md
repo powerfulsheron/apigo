@@ -1,10 +1,5 @@
 ## Getting started:
-<<<<<<< HEAD
 ```ssh
-=======
-
-```
->>>>>>> 9c036b549db8873bc1db635a5f1dc67fe8fcc590
 $ sudo docker-compose up
 
 or
@@ -47,12 +42,7 @@ root@8344ae56c9b8:/go/src/apigo/back/tests# go test -v
 ### Auth
 
 #### Create user
-<<<<<<< HEAD
 ```javascript
-=======
-
-```
->>>>>>> 9c036b549db8873bc1db635a5f1dc67fe8fcc590
 POST
 http://localhost:5000/users
 {
@@ -65,12 +55,7 @@ http://localhost:5000/users
 ```
 
 #### Login and get JWT token
-<<<<<<< HEAD
 ```javascript
-=======
-
-```
->>>>>>> 9c036b549db8873bc1db635a5f1dc67fe8fcc590
 POST
 http://localhost:5000/login
 {
@@ -82,12 +67,7 @@ http://localhost:5000/login
 ### User
 
 #### Modify user
-<<<<<<< HEAD
 ```javascript
-=======
-
-```
->>>>>>> 9c036b549db8873bc1db635a5f1dc67fe8fcc590
 PUT
 http://localhost:5000/users/:uuid
 {
@@ -99,12 +79,7 @@ http://localhost:5000/users/:uuid
 ```
 
 #### Delete user
-<<<<<<< HEAD
 ```javascript
-=======
-
-```
->>>>>>> 9c036b549db8873bc1db635a5f1dc67fe8fcc590
 DELETE
 http://localhost:5000/users/:uuid
 {
