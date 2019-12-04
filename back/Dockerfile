@@ -1,4 +1,6 @@
-FROM golang
+FROM golang:stretch
+
+RUN apt-get update && apt-get install -y postgresql-client-9.6
 
 # if left blank app will run with dev settings
 # to build production image run:
@@ -15,14 +17,9 @@ RUN go get ./database
 RUN go get ./
 RUN go build
 
-# if dev setting will use pilu/fresh for code reloading via docker-compose volume sharing with local machine
-# if production setting will build binary
-CMD if [ ${APP_ENV} = production ]; \
-	then \
-	api; \
-	else \
-	go get github.com/pilu/fresh && \
-	fresh; \
-	fi
+COPY ./entrypt.sh /usr/local/bin/docker-entrypoint
+RUN chmod +x /usr/local/bin/docker-entrypoint
+
+ENTRYPOINT [ "docker-entrypoint" ]
 	
-EXPOSE 8080
+EXPOSE 5000

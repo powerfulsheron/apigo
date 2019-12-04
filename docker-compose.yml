@@ -1,4 +1,4 @@
-version: '2'
+version: "3"
 services:
   db:
     build: ./db
@@ -21,18 +21,18 @@ services:
     volumes:
       - ./back:/back:rw,consistent
     ports:
-      - "5000:8080"
-    links:
-      - db
+      - "5000:5000"
     depends_on:
       - db
 
-  frontend:
-    build:
-      context: ./front
-      args:
-        app_env: ${APP_ENV}
+  client:
+    build: "./client"
     volumes:
-      - ./front/src:/front/src
+      - "./client:/home/node/app:rw,consistent"
+    working_dir: "/home/node/app"
+    command: "yarn serve"
     ports:
-      - "3000:3000"
+      - 127.0.0.1:8000:8000
+      - 127.0.0.1:8080:8080
+    depends_on:
+      - api
